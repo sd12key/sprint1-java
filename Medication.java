@@ -35,9 +35,7 @@ public class Medication {
         return this.expiry_date;
     }
 
-    // private setter method to change the name of the medication
-    // in a real-world scenario, the name of a medication should not be changed
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

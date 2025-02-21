@@ -21,10 +21,8 @@ public class Specialization {
     public String getName() {
         return this.name;
     }
-
-    // The name of a specialization can only be set once, when the specialization is created.
-    // but just in case, I keep private setter method to change it, for debugging purposes.
-    private void setName(String name) {
+    
+    public void setName(String name) {
         this.name = name;
     }
 
