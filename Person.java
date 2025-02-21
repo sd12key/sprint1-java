@@ -2,17 +2,17 @@
 * The Person class represents a generic person in the Pharmacy Management System.
 * It serves as the superclass for both Patient and Doctor classes.
 * This class contains common attributes such as ID, name, age, and phone number.
-* 
-* @author YourName
-* @version 1.0
-* @since 2025-02-20
+* @author sd12key
 */
 public class Person {
     
     /**
-     * Unique identifier for the person.
+     * unique identifier for the person.
+     * immutable, cannot be changed after creation.
+     * usually auto-incremented in the database,
+     * serves as primary key
      */
-    private int id;
+    private final int id;
     /**
      * Name of the person.
      */
@@ -71,16 +71,13 @@ public class Person {
     }
 
     //setters
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
     public void setAge(int age) {
         this.age = age;
+
     }
 
     public void setPhoneNumber(String phone_number) {
@@ -89,11 +86,10 @@ public class Person {
 
     // toString() - Skips phone if null, skips age if 0
     public String toString() {
-        String result = "Person[" + id + ", " + name;
-        if (age != 0) result += ", " + age;
-        if (phone_number != null) result += ", " + phone_number;
+        String result = "Person[" + this.id + ", " + this.name;
+        if (this.age <= 0) result += ", " + this.age;
+        if (this.phone_number != null) result += ", " + this.phone_number;
         result += "]";
         return result;
     }
-
 }
