@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 
 public class Medication {
+    // id is final once set
     private final int id;
     private String name;
     private double dose;
@@ -35,6 +36,7 @@ public class Medication {
         return this.expiry_date;
     }
 
+    // not sure if we need all these setters
     public void setName(String name) {
         this.name = name;
     }
