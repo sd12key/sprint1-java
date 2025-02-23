@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Patient extends Person {
+    // in order to make the Patient class database-friendly we 
+    // probably have to have patient_id property as well here 
+    // (which would be auto-incremented in the patients table)
     private List<Medication> medications;
     private List<Prescription> prescriptions;
 
@@ -12,20 +15,13 @@ public class Patient extends Person {
         this.prescriptions = new ArrayList<>();
     }
 
-    // constructor with only id and name
-    public Patient(int id, String name) {
-        super(id, name);
-        this.medications = new ArrayList<>();
-        this.prescriptions = new ArrayList<>();
-    }
-
     // getters
     public List<Medication> getMedications() {
-        return medications;
+        return this.medications;
     }
 
     public List<Prescription> getPrescriptions() {
-        return prescriptions;
+        return this.prescriptions;
     }
 
     // getters of just ids of medications and prescriptions (in a list)
@@ -104,7 +100,7 @@ public class Patient extends Person {
     }
     
     public String toString() {
-        return "Patient[" + getId() + ", " + getName() + ", Medications: " + medications.size() 
-                + ", Prescriptions: " + prescriptions.size() + "]";
+        return "Patient[" + getId() + ", " + getName() + ", Medications: " + this.medications.size() 
+                + ", Prescriptions: " + this.prescriptions.size() + "]";
     }
 }

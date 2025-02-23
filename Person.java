@@ -36,21 +36,10 @@ public class Person {
      */
     public Person(int id, String name, int age, String phone_number) {
         this.id = id;
-        this.name = name;
+        this.name = name.trim().replaceAll("\\s+", " ");
         this.age = age;
-        this.phone_number = phone_number;
-    }
-
-    /**
-     * Constructs a new Person with the specified ID and name.
-     * The age is set to 0, and the phone number is set to null.
-     * This constructor is useful when only the ID and name are known.
-     * 
-     * @param id   The unique identifier for the person.
-     * @param name The name of the person.
-     */
-    public Person(int id, String name) {
-        this(id, name, 0, null);
+        phone_number = phone_number.trim().replaceAll("\\D", "");
+        this.phone_number = phone_number.substring(0, Math.min(10, phone_number.length()));
     }
 
     //getters
@@ -72,7 +61,7 @@ public class Person {
 
     //setters
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim().replaceAll("\\s+", " ");
     }
 
     public void setAge(int age) {
@@ -81,15 +70,12 @@ public class Person {
     }
 
     public void setPhoneNumber(String phone_number) {
-        this.phone_number = phone_number;
+        phone_number = phone_number.trim().replaceAll("\\D", "");
+        this.phone_number = phone_number.substring(0, Math.min(10, phone_number.length()));
     }
 
     // toString() - Skips phone if null, skips age if 0
     public String toString() {
-        String result = "Person[" + this.id + ", " + this.name;
-        if (this.age <= 0) result += ", " + this.age;
-        if (this.phone_number != null) result += ", " + this.phone_number;
-        result += "]";
-        return result;
+        return ("Person[ID: " + this.id + ", Name: " + this.name + ", Age: " + this.age + ", Tel: " + this.phone_number + "]");
     }
 }

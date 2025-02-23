@@ -2,22 +2,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Doctor extends Person {
-    private int specialization_id;
+    // in order to make the Doctor class database-firlendly we 
+    // probably have to have doctor_id here 
+    // (which would be auto-incremented in the doctors table)
+    private String specialization;
     private List<Patient> patients;
 
-    public Doctor(int id, String name, int age, String phone_number, int specialization_id) {
+    public Doctor(int id, String name, int age, String phone_number, String specialization) {
         super(id, name, age, phone_number);
-        this.specialization_id = specialization_id;
+        this.specialization = specialization;
         this.patients = new ArrayList<>();
     }
 
-    public int getSpecializationId() {
-        return specialization_id;
+    public String getSpecialization() {
+        return this.specialization;
     }
 
     // getter of patient object list
     public List<Patient> getPatients() { 
-        return patients; 
+        return this.patients; 
     }
 
     // getter of just ids of patients (in a list)
@@ -30,6 +33,10 @@ public class Doctor extends Person {
     }
 
     // setters
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
     public boolean addPatient(Patient patient) {
         if (!this.patients.contains(patient)) {
             this.patients.add(patient);
@@ -61,7 +68,7 @@ public class Doctor extends Person {
     }
     
     public String toString() {
-        return "Doctor[ID: " + super.getId() + ", " + super.getName() + ", Specialization ID: " + this.specialization_id + 
+        return "Doctor[ID: " + super.getId() + ", " + super.getName() + ", Specialization: " + this.specialization + 
                ", Number of Patients: " + this.patients.size() + "]";
     }
 }
