@@ -58,6 +58,6 @@ public class Prescription {
     public String toString() {
         return "Prescription[" + this.id + ", Doctor: " + doctor.getName() 
                 + ", Patient: " + patient.getName() + ", Medication: " 
-                + medication.getName() + ", Expiry: " + prescription_expiry + "]";
+                + medication.getName() + ", Expiry: " + this.prescription_expiry + "]";
     }
 }

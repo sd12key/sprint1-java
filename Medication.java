@@ -1,6 +1,10 @@
 import java.time.LocalDate;
 
 public class Medication {
+    private static final String DEFAULT_NAME = "Unknown Medication";
+    private static final double DEFAULT_DOSE = 0.0;
+    private static final int DEFAULT_STOCK = 0;
+
     // id is final once set
     private final int id;
     private String name;
@@ -8,12 +12,15 @@ public class Medication {
     private int quantity_in_stock;
     private LocalDate expiry_date;
 
-    public Medication(int id, String name, double dose, int quantity_in_stock, LocalDate expiry_date) {
+    // full constructor with specific values, but does validation
+    // if values are invalid, set to default values
+    // expiry_date must be string in YYYY-MM format
+    public Medication(int id, String name, double dose, int quantity_in_stock, String expiry_date) {
         this.id = id;
-        this.name = name.trim().replaceAll("\\s+", " ");
-        this.dose = dose;
-        this.quantity_in_stock = quantity_in_stock;
-        this.expiry_date = expiry_date; 
+        this.name = MedUtils.validateName(name) ? MedUtils.normalizeName(name) : DEFAULT_NAME;
+        this.dose = MedUtils.validateDose(dose) ? dose : DEFAULT_DOSE;
+        this.quantity_in_stock = MedUtils.validateStockQty(quantity_in_stock) ? quantity_in_stock : DEFAULT_STOCK;
+        this.expiry_date = MedUtils.validateYearMonthString(expiry_date) ? MedUtils.stringMedExpToLocalDate(expiry_date) : MedUtils.localDateToMedExp(LocalDate.now());
     }
 
     public int getId() {
@@ -32,29 +39,50 @@ public class Medication {
         return this.quantity_in_stock;
     }
 
+    public String getExpiryDateString() {
+        return this.expiry_date.toString().substring(0, 7);
+    }
+
     public LocalDate getExpiryDate() {
         return this.expiry_date;
     }
 
-    // not sure if we need all these setters
-    public void setName(String name) {
-        this.name = name.trim().replaceAll("\\s+", " ");
+    // setter for name with validation
+    // return true if the field was updated, false otherwise
+    public boolean setName(String name) {
+        if (MedUtils.validateName(name)) {
+            this.name = MedUtils.normalizeName(name);
+            return true;
+        }       
+        return false;
     }
 
-    public void setDose(double dose) {
-        this.dose = dose;
+    public boolean setDose(double dose) {
+        if (MedUtils.validateDose(dose)) {
+            this.dose = dose;
+            return true;
+        }
+        return false;
     }
 
-    public void setQuantityInStock(int quantity_in_stock) {
-        this.quantity_in_stock = quantity_in_stock;
+    public boolean setQuantityInStock(int quantity_in_stock) {
+        if (MedUtils.validateStockQty(quantity_in_stock)) {
+            this.quantity_in_stock = quantity_in_stock;
+            return true;
+        }
+        return false;
     }
 
-    public void setExpiryDate(LocalDate expiry_date) {
-        this.expiry_date = expiry_date;
+    public boolean setExpiryDateFromString(String expiry_date) {
+        if (MedUtils.validateYearMonthString(expiry_date)) {
+            this.expiry_date = MedUtils.stringMedExpToLocalDate(expiry_date);
+            return true;
+        }
+        return false;
     }
-
+    
     public String toString() {
-        return "Medication[" + this.id + ", " + this.name + ", " + Utilities.formatNumber(this.dose, 3) + ", Stock: " 
-                + this.quantity_in_stock + ", Expiry: " + this.expiry_date + "]";
+        return "Medication[" + this.id + ", " + this.name + ", " + MedUtils.formatDoseNumber(this.dose, 3) + ", Stock: " 
+                + this.quantity_in_stock + ", Expiry: " + this.getExpiryDateString() + "]";
     }
 }

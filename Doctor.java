@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Doctor extends Person {
+    private static final String DEFAULT_SPECIALIZATION = "Unknown Specialization";
     // in order to make the Doctor class database-firlendly we 
     // probably have to have doctor_id here 
     // (which would be auto-incremented in the doctors table)
@@ -10,7 +11,7 @@ public class Doctor extends Person {
 
     public Doctor(int id, String name, int age, String phone_number, String specialization) {
         super(id, name, age, phone_number);
-        this.specialization = specialization;
+        this.specialization = MedUtils.validateName(specialization) ? MedUtils.normalizeName(specialization) : DEFAULT_SPECIALIZATION;
         this.patients = new ArrayList<>();
     }
 
@@ -33,10 +34,37 @@ public class Doctor extends Person {
     }
 
     // setters
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public boolean setSpecialization(String specialization) {
+        if (MedUtils.validateName(specialization)) {
+            this.specialization = MedUtils.normalizeName(specialization);
+            return true;
+        }
+        return false;
     }
 
+    /**
+     * Updates the doctor's fields, including specialization.
+     *
+     * @param name           the new name (null to keep the old name)
+     * @param age            the new age (-1 to keep the old age)
+     * @param phoneNumber    the new phone number (null to keep the old phone number)
+     * @param specialization the new specialization (null to keep the old specialization)
+     * @return true if all updates were successful, false otherwise
+     */
+    // extending the updateCommonFields method from the parent class
+    public boolean updateFields(String name, int age, String phoneNumber, String specialization) {
+        // Update common fields using the parent class method
+        if (!super.updateCommonFields(name, age, phoneNumber)) {
+            return false;
+        }
+        // Update specialization if specified
+        if (specialization != null && !this.setSpecialization(specialization)) {
+            return false;
+        }
+        return true;
+    }
+
+    // add patient
     public boolean addPatient(Patient patient) {
         if (!this.patients.contains(patient)) {
             this.patients.add(patient);
