@@ -81,6 +81,38 @@ public class Medication {
         return false;
     }
     
+    /**
+     * Updates the medication's fields if new values are specified.
+     * If a new value is not specified (null for name/expiry_date, -1 for dose/quantity_in_stock),
+     * the old value is retained.
+     *
+     * @param name              the new name (null to keep the old name)
+     * @param dose              the new dose (-1 to keep the old dose)
+     * @param quantity_in_stock the new quantity in stock (-1 to keep the old quantity)
+     * @param expiry_date       the new expiry date in "YYYY-MM" format (null to keep the old expiry date)
+     * @return true if all updates were successful, false otherwise
+     */
+    public boolean updateFields(String name, double dose, int quantity_in_stock, String expiry_date) {
+        // Update name if specified
+        if (name != null && !this.setName(name)) {
+            return false;
+        }
+        // Update dose if specified
+        if (dose != -1 && !this.setDose(dose)) {
+            return false;
+        }
+        // Update quantity in stock if specified
+        if (quantity_in_stock != -1 && !this.setQuantityInStock(quantity_in_stock)) {
+            return false;
+        }
+        // Update expiry date if specified
+        if (expiry_date != null && !this.setExpiryDateFromString(expiry_date)) {
+            return false;
+        }
+        // All updates were successful
+        return true;
+    }
+
     public String toString() {
         return "Medication[" + this.id + ", " + this.name + ", " + MedUtils.formatDoseNumber(this.dose, 3) + ", Stock: " 
                 + this.quantity_in_stock + ", Expiry: " + this.getExpiryDateString() + "]";

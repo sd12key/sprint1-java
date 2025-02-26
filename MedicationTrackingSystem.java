@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,22 @@ public class MedicationTrackingSystem {
 
     public int getNumPrescriptions() {
         return this.prescriptions.size();
+    }
+
+    public List<Patient> getPatients() {
+        return this.patients;
+    }
+
+    public List<Doctor> getDoctors() {
+        return this.doctors;
+    }
+
+    public List<Medication> getMedications() {
+        return this.medications;
+    }
+
+    public List<Prescription> getPrescriptions() {
+        return this.prescriptions;
     }
 
     //getters of patients, doctors, medications, prescriptions by id
@@ -124,7 +141,7 @@ public class MedicationTrackingSystem {
         return false;
     }
     
-    public boolean editPatient(int patient_id, String name, int age, String phone_number) {
+    public boolean editPatientById(int patient_id, String name, int age, String phone_number) {
         for (Patient patient : this.patients) {
             if (patient.getId() == patient_id) {
                 // try to change the name, age, phone_number
@@ -134,7 +151,45 @@ public class MedicationTrackingSystem {
         // looped through all patients, but patient not found
         return false;
     }
+
+    public boolean editPatient(Patient patient, String name, int age, String phone_number) {
+        // Check if the patient is in the list
+        if (this.patients.contains(patient)) {
+        // Update the patient's fields
+            return patient.updateCommonFields(name, age, phone_number);
+        }
+        // Patient not found
+        return false;
+    }
     
+    /**
+     * Removes a patient from the system by their instance.
+     *
+     * @param patient the patient to remove
+     * @return true if the patient was found and removed, false otherwise
+     */
+    public boolean removePatient(Patient patient) {
+        if (patient == null) {
+            return false;
+        }
+        return this.removePatientById(patient.getId());
+    }
+
+    /**
+     * Removes a patient from the system by their ID.
+     *
+     * @param patient_id the ID of the patient to remove
+     * @return true if the patient was found and removed, false otherwise
+     */
+    public boolean removePatientById(int patient_id) {
+        for (Patient patient : this.patients) {
+            if (patient.getId() == patient_id) {
+                return this.patients.remove(patient);
+            }
+        }
+        return false;
+    }
+
     /**
      * Searches for doctors by name.
      *
@@ -180,7 +235,7 @@ public class MedicationTrackingSystem {
         return false;
     }
 
-    public boolean editDoctor(int doctor_id, String name, int age, String phone_number, String specialization) {
+    public boolean editDoctorById(int doctor_id, String name, int age, String phone_number, String specialization) {
         for (Doctor doctor : this.doctors) {
             if (doctor.getId() == doctor_id) {
                 // try to change the name, age, phone_number and specialization
@@ -188,6 +243,43 @@ public class MedicationTrackingSystem {
             }
         } 
         // looped through all doctors, but doctor with this id was not found
+        return false;
+    }
+
+    public boolean editDoctor(Doctor doctor, String name, int age, String phone_number, String specialization) {
+        if (this.doctors.contains(doctor)) {
+            // try to change the name, age, phone_number and specialization
+            return doctor.updateFields(name, age, phone_number, specialization);
+        }
+        // doctor was not found
+        return false;
+    }
+
+    /**
+     * Removes a doctor from the system by their instance.
+     *
+     * @param doctor the doctor to remove
+     * @return true if the doctor was found and removed, false otherwise
+     */
+    public boolean removeDoctor(Doctor doctor) {
+        if (doctor == null) {
+            return false;
+        }
+        return this.removeDoctorById(doctor.getId());
+    }
+
+    /**
+     * Removes a doctor from the system by their ID.
+     *
+     * @param doctor_id the ID of the doctor to remove
+     * @return true if the doctor was found and removed, false otherwise
+     */
+    public boolean removeDoctorById(int doctor_id) {
+        for (Doctor doctor : this.doctors) {
+            if (doctor.getId() == doctor_id) {
+                return this.doctors.remove(doctor);
+            }
+        }
         return false;
     }
 
@@ -244,7 +336,7 @@ public class MedicationTrackingSystem {
     }
 
     /**
-     * Edits a medication record.
+     * Edits a medication record by ID.
      * If a new value is not specified (null for name/expiry_date, -1 for dose/quantity_in_stock),
      * the old value is retained.
      *
@@ -255,31 +347,89 @@ public class MedicationTrackingSystem {
      * @param expiry_date       the new expiry date in "YYYY-MM" format (null to keep the old expiry date)
      * @return true if the medication was found and updated, false otherwise
      */
-    public boolean editMedication(int medication_id, String name, double dose, int quantity_in_stock, String expiry_date) {
+    public boolean editMedicationById(int medication_id, String name, double dose, int quantity_in_stock, String expiry_date) {
         for (Medication medication : this.medications) {
             if (medication.getId() == medication_id) {
-                // Update name if specified
-                if (name != null && !medication.setName(name)) {
-                    return false;
-                }
-                // Update dose if specified
-                if (dose != -1 && !medication.setDose(dose)) {
-                    return false;
-                }
-                // Update quantity in stock if specified
-                if (quantity_in_stock != -1 && !medication.setQuantityInStock(quantity_in_stock)) {
-                    return false;
-                }
-                // Update expiry date if specified
-                if (expiry_date != null && !medication.setExpiryDateFromString(expiry_date)) {
-                    return false;
-                }
-                // All updates were successful
-                return true;
+                // update logic is in Medication class
+                return medication.updateFields(name, dose, quantity_in_stock, expiry_date);
             }
         }
         // Medication not found
         return false;
+    }
+
+    // edit medication by class instance
+    public boolean editMedication(Medication medication, String name, double dose, int quantity_in_stock, String expiry_date) {
+        if (this.medications.contains(medication)) {
+            // update logic is in Medication class
+            return medication.updateFields(name, dose, quantity_in_stock, expiry_date);
+        }
+        // Medication not found
+        return false;
+    }
+
+    /**
+     * Removes a medication from the system by its instance.
+     *
+     * @param medication the medication to remove
+     * @return true if the medication was found and removed, false otherwise
+     */
+    public boolean removeMedication(Medication medication) {
+        if (medication == null) {
+            return false;
+        }
+        return this.removeMedicationById(medication.getId());
+    }
+
+    /**
+    * Removes a medication from the system by its ID.
+    *
+    * @param medication_id the ID of the medication to remove
+    * @return true if the medication was found and removed, false otherwise
+    */
+    public boolean removeMedicationById(int medication_id) {
+        for (Medication medication : this.medications) {
+            if (medication.getId() == medication_id) {
+                return this.medications.remove(medication);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks for expired medications in the system.
+     *
+     * @return a list of expired Medication objects
+     */
+    public List<Medication> checkForExpiredMeds() {
+        List<Medication> expired_meds = new ArrayList<>();
+        LocalDate current_date = LocalDate.now();
+        for (Medication medication : this.medications) {
+            if (medication.getExpiryDate().isBefore(current_date)) {
+                expired_meds.add(medication); // Add expired medication to the list
+            }
+        }
+        return expired_meds;
+    }
+
+    /**
+     * Generates a report of expired medications.
+     *
+     * @return an ArrayList of strings, where each string represents a line in the report
+     */
+    public List<String> checkForExpiredMedsReport() {
+        List<Medication> expired_meds = this.checkForExpiredMeds(); 
+        List<String> expired_meds_report = new ArrayList<>();
+
+        // Add a header to the report
+        expired_meds_report.add("--> ======= Expired Medications Report =======");
+        // Add details for each expired medication
+        for (Medication medication : expired_meds) {
+            expired_meds_report.add(medication.toString());
+        }
+        expired_meds_report.add("<-- ============ End of Report ==============");
+
+        return expired_meds_report;
     }
 
     // toString() method, shows statistics

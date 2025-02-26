@@ -32,9 +32,21 @@ public class MedicationTrackingSystemTest {
         Patient patient_jane = med_system.getPatientById(2);
         System.out.println(patient_jane);
 
-        
+        med_system.addMedication("Aspirin",100 , 20, "2025-10");
+        med_system.addMedication("Tylenol",50 , 20, "2025-11");
+        med_system.getMedications();
 
+        System.out.println(med_system.getMedicationById(1));
+        System.out.println(med_system.getMedicationById(2));
+
+        patient_jane.addMedication(med_system.getMedicationById(1));
+        System.out.println(patient_jane.getMedications());
+
+        med_system.removeMedication(med_system.getMedicationById(1));
+        
         System.out.println(med_system);
+
+        System.out.println(patient_jane.getMedications());
         
 
     }
