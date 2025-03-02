@@ -67,20 +67,9 @@ public class Doctor extends Person {
     // add patient
     public boolean addPatient(Patient patient) {
         if (patient == null) return false;
+        
         // first check if the patient is already in the doctor's list
-
-        // compare by ID for safety (not by reference)
-        for (Patient p : this.patients) {
-            if (p.getId() == patient.getId()) {
-                // do not assign the same patient twice
-                return false;
-            }
-        }
-
-        // now check by reference exists (ensures it's from the same system)
-        if (this.patients.contains(patient)) {
-        return false; 
-        }
+        if (this.patients.contains(patient)) return false;
 
         // if patient not in the list, add!
         this.patients.add(patient);
@@ -91,8 +80,8 @@ public class Doctor extends Person {
     // returns true if patient was found and was removed
     // false otherwise
     public boolean removePatient(Patient patient) {
-    if (patient == null) return false;
-    return this.patients.remove(patient);
+        if (patient == null) return false;
+        return this.patients.remove(patient);
     }
     
     // remove patient by id

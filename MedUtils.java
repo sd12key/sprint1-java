@@ -74,7 +74,22 @@ public class MedUtils {
         DateTimeFormatter med_exp_formatter = DateTimeFormatter.ofPattern("yyyy-MM");
         return med_exp_local_date.format(med_exp_formatter);
     }
+
+    public static boolean validateDateString(String date) {
+        // regex to match the format XXXX-XX-XX
+        // not checking leap years!
+        String dateRegex = "^(20\\d{2})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
+        if (!date.trim().matches(dateRegex)) {
+            return false;
+        }
+        return true;
+    }    
     
+    public static LocalDate stringToLocalDate(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(date.trim(), formatter);
+    }
+
     // normalize name
     public static String normalizeName(String name) {
         return name.trim().replaceAll("\\s+", " ");

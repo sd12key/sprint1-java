@@ -46,6 +46,7 @@ public class Patient extends Person {
     // since it will add the corresponding medication as well
     public boolean addPrescription(Prescription prescription) {
         // check if the prescription id already exists
+        // checking by ID, but could also check by reference
         for (Prescription current_prescription : this.prescriptions) {
             if (current_prescription.getId() == prescription.getId()) {
                 // such prescription id already exists
@@ -53,13 +54,11 @@ public class Patient extends Person {
                 return false;  
             }
         }
-    
         // try to add medication, but only continue if successful
         // if such medication already exists (same id), will return false
         if (!this.addMedication(prescription.getMedication())) {
             return false; 
         }
-    
         // if medication was successfully added, add the prescription
         this.prescriptions.add(prescription);
         return true; 
@@ -69,6 +68,7 @@ public class Patient extends Person {
     // this method is called from addPrescription    
     private boolean addMedication(Medication medication) {
         // check if the medication id already exists
+        // checking by ID, but could also check by reference
         for (Medication current_medication : this.medications) {
             if (current_medication.getId() == medication.getId()) {
                 // such medication id already exists

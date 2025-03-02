@@ -355,7 +355,6 @@ public class MedicationTrackingSystem {
         }
         return false;
     }
-    
 
     /**
      * Edits a medication record by ID.
@@ -486,9 +485,9 @@ public class MedicationTrackingSystem {
     }
     
     // overloaded method with date as a String ("YYYY-MM-DD")
-    public boolean addPrescription(Doctor doctor, Patient patient, Medication medication, String expiry_date) {
-        if (!MedUtils.validateYearMonthString(expiry_date)) return false; 
-        LocalDate parsedDate = MedUtils.stringMedExpToLocalDate(expiry_date);
+    public boolean addPrescription(Doctor doctor, Patient patient, Medication medication, String expiry_full_date) {
+        if (!MedUtils.validateDateString(expiry_full_date)) return false; 
+        LocalDate parsedDate = MedUtils.stringToLocalDate(expiry_full_date);
         return addPrescription(doctor, patient, medication, parsedDate);
     }
     
@@ -511,7 +510,6 @@ public class MedicationTrackingSystem {
         return true;
     }
 
-
     // get prescriptions by doctor reference
     public List<Prescription> getPrescriptionsByDoctor(Doctor doctor) {
     if (doctor == null || !this.doctors.contains(doctor)) return new ArrayList<>();
@@ -528,6 +526,36 @@ public class MedicationTrackingSystem {
         }
     }
     return result;
+    }
+
+    // generate report (list of strings) of prescriptions by doctor ID
+    public List<String> checkPrescriptionsByDoctorReport(int doctor_id) {
+        // check if doctor exists
+        if (getDoctorById(doctor_id) == null) {
+            return List.of("Invalid Doctor ID: " + doctor_id);
+        }
+        List<Prescription> prescriptions = getPrescriptionsByDoctor(doctor_id);
+        List<String> report = new ArrayList<>();
+    
+        report.add("--> ======= Prescription Report for Doctor ID: " + doctor_id + " =======");
+    
+        if (prescriptions.isEmpty()) {
+            report.add("No prescriptions found.");
+        } else {
+            for (Prescription prescription : prescriptions) {
+                report.add(prescription.toString());
+            }
+        }
+        report.add("<-- ============ End of Report ==============");
+        return report;
+    }
+    
+    // overloaded version to use Doctor object
+    public List<String> checkPrescriptionsByDoctorReport(Doctor doctor) {
+        if (doctor == null || !this.doctors.contains(doctor)) {
+            return List.of("Invalid Doctor reference.");
+        }
+        return checkPrescriptionsByDoctorReport(doctor.getId());
     }
 
     // toString() method, shows statistics
