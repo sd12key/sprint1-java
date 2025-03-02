@@ -2,9 +2,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MedicationTrackingSystemTest {
-    private static final Scanner scanner = new Scanner(System.in);
 
-    
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         MedicationTrackingSystem med_system = new MedicationTrackingSystem();
@@ -15,13 +14,8 @@ public class MedicationTrackingSystemTest {
         FileUtils.loadPrescriptionsFromCSV(med_system, "prescriptions.csv");
         System.out.println("\n === System Initialized from CSV files ===\n");
 
-        // FileUtils.pressAnyKeyToContinue(scanner);
-        // FileUtils.clear();
-        // List<String> system_report = med_system.fullSystemReport();
-        // system_report.forEach(line -> System.out.println(line));
-
-        List<String> patient_report = med_system.searchPatientReport("       ");
-        patient_report.forEach(line -> System.out.println(line));
+        MedicationTrackingSystemExampleMenu.mainMenu(med_system, scanner);
+        
     }
 
 
