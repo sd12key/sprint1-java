@@ -100,7 +100,8 @@ public class Doctor extends Person {
     }
     
     public String toString() {
-        return "Doctor[ID: " + super.getId() + ", " + super.getName() + ", Specialization: " + this.specialization + 
-               ", Number of Patients: " + this.patients.size() + "]";
+        return "Doctor[ID: " + super.getId() + ", " + super.getName() + ", Age: " + super.getAge() + ", Phone: " 
+        + super.getPhoneNumber() + ", Specialization: " + this.specialization 
+        + ", Number of Patients: " + this.patients.size() + "]";
     }
 }

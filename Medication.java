@@ -114,7 +114,7 @@ public class Medication {
     }
 
     public String toString() {
-        return "Medication[" + this.id + ", " + this.name + ", " + MedUtils.formatDoseNumber(this.dose, 3) + ", Stock: " 
+        return "Medication[" + this.id + ", " + this.name + ", Dose: " + MedUtils.formatDoseNumber(this.dose, 3) + ", Stock: " 
                 + this.quantity_in_stock + ", Expiry: " + this.getExpiryDateString() + "]";
     }
 }
