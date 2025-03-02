@@ -100,7 +100,7 @@ public class Patient extends Person {
     }
     
     public String toString() {
-        return "Patient[" + super.getId() + ", " + super.getName() + ", Phone: " + super.getPhoneNumber() + ", Medications: " + this.medications.size() 
+        return "Patient[" + super.getId() + ", " + super.getName() + ", Age: " + super.getAge() + ", Phone: " + super.getPhoneNumber() + ", Medications: " + this.medications.size() 
                 + ", Prescriptions: " + this.prescriptions.size() + "]";
     }
 }

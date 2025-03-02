@@ -128,12 +128,6 @@ public class FileUtils {
             System.out.println("Error reading file: " + filename);
         }
     }
-
-    // workaround to clear the console
-    public static void clear() {
-        for (int i = 0; i < 100; i++) {
-            System.out.println();
-        }
-    }
+    
 
 }

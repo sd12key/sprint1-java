@@ -130,7 +130,37 @@ public class MedicationTrackingSystem {
     public List<Patient> searchPatientsByName(String name) {
         return searchPatientsByName(name, false);
     }
+
     
+    public List<String> searchPatientReport(String name) {
+        List<Patient> inclusive_matches = searchPatientsByName(name);
+        List<Patient> exact_matches = searchPatientsByName(name, true);
+        
+        List<String> report = new ArrayList<>();
+        report.add("--> ======= Patient Search Report for '" + MedUtils.normalizeName(name) + "' =======");
+    
+        if (exact_matches.isEmpty() && inclusive_matches.isEmpty()) {
+            report.add("No matches found for '" + name + "'.");
+        } else {
+            if (!exact_matches.isEmpty()) {
+                report.add("Exact match(es) found:");
+                for (Patient patient : exact_matches) {
+                    report.add(patient.toString());
+                }
+            }
+            if (!inclusive_matches.isEmpty()) {
+                report.add("Partial match(es) found:");
+                for (Patient patient : inclusive_matches) {
+                    report.add(patient.toString()); 
+                }
+            }
+        }
+
+        report.add("<-- ============ End of Report ==============");
+        return report;
+    }
+
+
     // adds patient only if field validation is true
     // returns true if patient was added, false otherwise
     public boolean addPatient(String name, int age, String phone_number) {
@@ -223,6 +253,36 @@ public class MedicationTrackingSystem {
     public List<Doctor> searchDoctorsByName(String name) {
         return searchDoctorsByName(name, false);
     }
+
+    // generate report of search results (doctors by name)
+    public List<String> searchDoctorReport(String name) {
+        List<Doctor> inclusive_matches = searchDoctorsByName(name);
+        List<Doctor> exact_matches = searchDoctorsByName(name, true);
+        
+        List<String> report = new ArrayList<>();
+        report.add("--> ======= Doctor Search Report for '" + MedUtils.normalizeName(name) + "' =======");
+    
+        if (exact_matches.isEmpty() && inclusive_matches.isEmpty()) {
+            report.add("No matches found for '" + name + "'.");
+        } else {
+            if (!exact_matches.isEmpty()) {
+                report.add("Exact match(es) found:");
+                for (Doctor doctor : exact_matches) {
+                    report.add(doctor.toString());
+                }
+            }
+            if (!inclusive_matches.isEmpty()) {
+                report.add("Partial match(es) found:");
+                for (Doctor doctor : inclusive_matches) {
+                    report.add(doctor.toString()); 
+                }
+            }
+        }
+    
+        report.add("<-- ============ End of Report ==============");
+        return report;
+    }
+    
 
     // add doctor only if field validation is true
     // returns true if doctor was added, false otherwise
@@ -337,6 +397,36 @@ public class MedicationTrackingSystem {
     public List<Medication> searchMedicationsByName(String name) {
         return searchMedicationsByName(name, false);
     }
+
+    // generate report of search results (medications by name)
+    public List<String> searchMedicationReport(String name) {
+        List<Medication> inclusive_matches = searchMedicationsByName(name);
+        List<Medication> exact_matches = searchMedicationsByName(name, true);
+        
+        List<String> report = new ArrayList<>();
+        report.add("--> ======= Medication Search Report for '" + MedUtils.normalizeName(name) + "' =======");
+    
+        if (exact_matches.isEmpty() && inclusive_matches.isEmpty()) {
+            report.add("No matches found for '" + name + "'.");
+        } else {
+            if (!exact_matches.isEmpty()) {
+                report.add("Exact match(es) found:");
+                for (Medication medication : exact_matches) {
+                    report.add(medication.toString());
+                }
+            }
+            if (!inclusive_matches.isEmpty()) {
+                report.add("Partial match(es) found:");
+                for (Medication medication : inclusive_matches) {
+                    report.add(medication.toString()); 
+                }
+            }
+        }
+    
+        report.add("<-- ============ End of Report ==============");
+        return report;
+    }
+    
 
     /**
      * Adds a medication only if field validation is true.
@@ -560,7 +650,7 @@ public class MedicationTrackingSystem {
 
     // system report of all medications
     public List<String> medicationReport() {
-        List<Medication> medications = searchMedicationsByName(""); // Get all medications
+        List<Medication> medications = searchMedicationsByName("");
         List<String> report = new ArrayList<>();
     
         report.add("--> ======= Medication Report =======");
@@ -719,9 +809,8 @@ public class MedicationTrackingSystem {
     
         return report;
     }
-    
 
-    // toString() method, shows statistics
+    // toString() method, shows some statistics
     public String toString() {
         return "MedicationTrackingSystem[Patients: " + this.patients.size() +
                ", Doctors: " + this.doctors.size() +
