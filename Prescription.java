@@ -52,7 +52,9 @@ public class Prescription {
     // toString() method
     public String toString() {
         return "Prescription[" + this.id + ", Doctor: " + doctor.getName() 
-                + ", Patient: " + patient.getName() + ", Medication: " 
-                + medication.getName() + ", Expiry: " + this.prescription_expiry + "]";
+                + " (" + doctor.getId() + ")" + ", Patient: " + patient.getName() 
+                + " (" + patient.getId() + ")" + ", Medication: " 
+                + medication.getName() + " (" + medication.getId() + ")" 
+                + ", Expiry: " + this.prescription_expiry + "]";
     }
 }

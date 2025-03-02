@@ -474,7 +474,7 @@ public class MedicationTrackingSystem {
         for (Medication medication : expired_meds) {
             expired_meds_report.add(medication.toString());
         }
-        expired_meds_report.add("<-- ============ End of Report ==============");
+        expired_meds_report.add("<-- ======== End Expired Meds Report =========");
 
         return expired_meds_report;
     }
@@ -546,7 +546,7 @@ public class MedicationTrackingSystem {
                 report.add(prescription.toString());
             }
         }
-        report.add("<-- ============ End of Report ==============");
+        report.add("<-- ========== End of Prescription Report ===========");
         return report;
     }
     
@@ -557,6 +557,169 @@ public class MedicationTrackingSystem {
         }
         return checkPrescriptionsByDoctorReport(doctor.getId());
     }
+
+    // system report of all medications
+    public List<String> medicationReport() {
+        List<Medication> medications = searchMedicationsByName(""); // Get all medications
+        List<String> report = new ArrayList<>();
+    
+        report.add("--> ======= Medication Report =======");
+    
+        if (medications.isEmpty()) {
+            report.add("No medications found.");
+        } else {
+            for (Medication medication : medications) {
+                // Collect all prescription IDs where this medication object is used
+                List<Integer> prescriptionIds = new ArrayList<>();
+                for (Prescription prescription : this.prescriptions) {
+                    if (prescription.getMedication() == medication) { // Compare object references
+                        prescriptionIds.add(prescription.getId());
+                    }
+                }
+    
+                // Format prescription list as [x,x,x] or [none]
+                String prescriptionList = prescriptionIds.isEmpty() ? "[none]" : prescriptionIds.toString();
+    
+                // Add formatted line
+                report.add(medication.toString() + " Prescr" + prescriptionList);
+            }
+        }
+    
+        report.add("<-- ======= End of Medications Report ========");
+    
+        return report;
+    }
+ 
+    // system report of all patients    
+    public List<String> patientReport() {
+        List<Patient> patients = searchPatientsByName("");
+        List<String> report = new ArrayList<>();
+    
+        report.add("--> ======= Patient Report =======");
+    
+        if (patients.isEmpty()) {
+            report.add("No patients found.");
+        } else {
+            for (Patient patient : patients) {
+                // get all doctor IDs assigned to this patient
+                List<Integer> doctor_ids = new ArrayList<>();
+                for (Doctor doctor : this.doctors) {
+                    if (doctor.getPatients().contains(patient)) { 
+                        doctor_ids.add(doctor.getId());
+                    }
+                }
+    
+                // get all medication IDs this patient is using
+                List<Integer> medication_ids = new ArrayList<>();
+                for (Medication medication : patient.getMedications()) {
+                    medication_ids.add(medication.getId());
+                }
+    
+                // get all prescription IDs assigned to this patient
+                List<Integer> prescription_ids = new ArrayList<>();
+                for (Prescription prescription : this.prescriptions) {
+                    if (prescription.getPatient() == patient) { 
+                        prescription_ids.add(prescription.getId());
+                    }
+                }
+    
+                // gormat Doc[x,x] Med[x,x,x] Prescr.[x,x]
+                String doctor_list = doctor_ids.isEmpty() ? "[none]" : doctor_ids.toString();
+                String medication_list = medication_ids.isEmpty() ? "[none]" : medication_ids.toString();
+                String prescription_list = prescription_ids.isEmpty() ? "[none]" : prescription_ids.toString();
+    
+                // add formatted patient line to report
+                report.add("Patient[" + patient.getId() + ", " + patient.getName() + ", Age: " 
+                + patient.getAge() + ", Tel: " + patient.getPhoneNumber() + "] "
+                + " Doc" + doctor_list + " Med" + medication_list + " Prescr" + prescription_list);
+            }
+        }
+    
+        report.add("<-- ======= End of Patient Report =========");
+    
+        return report;
+    }
+
+    public List<String> doctorReport() {
+        List<Doctor> doctors = searchDoctorsByName(""); 
+        List<String> report = new ArrayList<>();
+    
+        report.add("--> =========== Doctor Report ===========");
+    
+        if (doctors.isEmpty()) {
+            report.add("No doctors found.");
+        } else {
+            for (Doctor doctor : doctors) {
+                // get all patient IDs assigned to this doctor
+                List<Integer> patient_ids = new ArrayList<>();
+                for (Patient patient : doctor.getPatients()) {
+                    patient_ids.add(patient.getId());
+                }
+    
+                // Patients[x,x] or Patients[none]
+                String patientList = patient_ids.isEmpty() ? "[none]" : patient_ids.toString();
+    
+                // Manually format doctor details instead of using toString()
+                report.add("Doctor[" + doctor.getId() + ", " + doctor.getName() + ", Specialization: " 
+                           + doctor.getSpecialization() + "] Patients" + patientList);
+            }
+        }
+    
+        report.add("<-- ========= End of Doctor Report ===========");
+    
+        return report;
+    }
+
+    // prescription report
+    public List<String> prescriptionReport() {
+        List<String> report = new ArrayList<>();
+    
+        report.add("--> ========== Prescription Report ==========");
+    
+        if (this.prescriptions.isEmpty()) {
+            report.add("No prescriptions found.");
+        } else {
+            for (Prescription prescription : this.prescriptions) {
+                report.add("Prescription[" + prescription.getId() + "] "
+                           + "Doc[" + prescription.getDoctor().getName() + ", " + prescription.getDoctor().getId() + "] "
+                           + "Patient[" + prescription.getPatient().getName() + ", " + prescription.getPatient().getId() + "] "
+                           + "Med[" + prescription.getMedication().getName() + ", " + prescription.getMedication().getId() + "] "
+                           + "Exp[" + prescription.getPrescriptionExpiry() + "]");
+            }
+        }
+    
+        report.add("<-- ====== End of Prescription Report ======");
+    
+        return report;
+    }
+    
+    public List<String> fullSystemReport() {
+        List<String> report = new ArrayList<>();
+    
+        report.add("--> ======= Full System Report =======");
+        report.add("");
+    
+        // Add Medication Report
+        report.addAll(medicationReport());
+        report.add("");
+    
+        // Add Patient Report
+        report.addAll(patientReport());
+        report.add("");
+    
+        // Add Doctor Report
+        report.addAll(doctorReport());
+        report.add("");
+    
+        // Add Prescription Report
+        report.addAll(prescriptionReport());
+        report.add("");
+
+        report.add("<-- ======= End of Full System Report ========");
+    
+        return report;
+    }
+    
 
     // toString() method, shows statistics
     public String toString() {
