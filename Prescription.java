@@ -9,17 +9,6 @@ public class Prescription {
     private final Medication medication; 
     private final LocalDate prescription_expiry;
 
-    // constructor with prescription_expiry set to 1 year from now
-    public Prescription(int id, Doctor doctor, Patient patient, Medication medication) {
-        this.id = id;
-        this.doctor = doctor;
-        this.patient = patient;
-        this.medication = medication; 
-        this.prescription_expiry = LocalDate.now().plusYears(1);
-        // add this prescription to the patient's list of prescriptions
-        this.patient.addPrescription(this);
-    }
-
     // constructor with specific expiry date
     public Prescription(int id, Doctor doctor, Patient patient, Medication medication, LocalDate prescription_expiry) {
         this.id = id;

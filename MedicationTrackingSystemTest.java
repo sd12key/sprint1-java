@@ -39,7 +39,7 @@ public class MedicationTrackingSystemTest {
         System.out.println(med_system.getMedicationById(1));
         System.out.println(med_system.getMedicationById(2));
 
-        patient_jane.addMedication(med_system.getMedicationById(1));
+        // patient_jane.addMedication(med_system.getMedicationById(1));
         System.out.println(patient_jane.getMedications());
 
         med_system.removeMedication(med_system.getMedicationById(1));
@@ -47,6 +47,15 @@ public class MedicationTrackingSystemTest {
         System.out.println(med_system);
 
         System.out.println(patient_jane.getMedications());
+
+
+        System.out.println("\n === Loading Medications from CSV ===\n");
+        FileUtils.loadMedicationsFromCSV(med_system, "medications.csv");
+
+        System.out.println("\n === Medications Loaded ===");
+        for (Medication med : med_system.getMedications()) {
+            System.out.println(med);
+        }
         
 
     }

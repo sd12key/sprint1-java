@@ -71,7 +71,7 @@ public class MedicationTrackingSystem {
         }
         return null;
     }
-
+    
     /**
      * Gets a medication by its ID.
      *
@@ -135,7 +135,8 @@ public class MedicationTrackingSystem {
     // returns true if patient was added, false otherwise
     public boolean addPatient(String name, int age, String phone_number) {
         if (MedUtils.validateName(name) && MedUtils.validateAge(age) && MedUtils.validatePhoneNumber(phone_number)) {
-            this.patients.add(new Patient(this.getNumPatients()+1, name, age, phone_number));
+            int next_id = (patients.isEmpty()) ? 1 : patients.get(patients.size() - 1).getId() + 1;
+            this.patients.add(new Patient(next_id, name, age, phone_number));
             return true;
         }
         return false;
@@ -169,10 +170,8 @@ public class MedicationTrackingSystem {
      * @return true if the patient was found and removed, false otherwise
      */
     public boolean removePatient(Patient patient) {
-        if (patient == null) {
-            return false;
-        }
-        return this.removePatientById(patient.getId());
+        if (patient == null) return false;
+        return this.patients.remove(patient);
     }
 
     /**
@@ -229,7 +228,8 @@ public class MedicationTrackingSystem {
     // returns true if doctor was added, false otherwise
     public boolean addDoctor(String name, int age, String phone_number, String specialization) {
         if (MedUtils.validateName(name) && MedUtils.validateAge(age) && MedUtils.validatePhoneNumber(phone_number) && MedUtils.validateName(specialization)) {
-            this.doctors.add(new Doctor(this.getNumDoctors()+1, name, age, phone_number, specialization));
+            int next_id = (doctors.isEmpty()) ? 1 : doctors.get(doctors.size() - 1).getId() + 1;
+            this.doctors.add(new Doctor(next_id, name, age, phone_number, specialization));
             return true;
         }
         return false;
@@ -262,10 +262,8 @@ public class MedicationTrackingSystem {
      * @return true if the doctor was found and removed, false otherwise
      */
     public boolean removeDoctor(Doctor doctor) {
-        if (doctor == null) {
-            return false;
-        }
-        return this.removeDoctorById(doctor.getId());
+        if (doctor == null) return false;
+        return this.doctors.remove(doctor);
     }
 
     /**
@@ -281,6 +279,28 @@ public class MedicationTrackingSystem {
             }
         }
         return false;
+    }
+
+    // assign patient to doctor
+    public boolean assignPatientToDoctorById(int doctor_id, int patient_id) {
+        Doctor doctor = getDoctorById(doctor_id);
+        Patient patient = getPatientById(patient_id);
+        if (doctor == null || patient == null) {
+            return false; 
+        }
+        return doctor.addPatient(patient); 
+    }
+
+    // assign patient to doctor by reference, but checking that ids are in the system
+    // also checking if the objects are in the system
+    public boolean assignPatientToDoctor(Patient patient, Doctor doctor) {
+        if (patient == null || doctor == null) return false;
+        // check that both IDs exist in the system
+        if (getPatientById(patient.getId()) == null || getDoctorById(doctor.getId()) == null) {
+            // return false if the patient or doctor is not in the system
+            return false; 
+        }
+        return assignPatientToDoctorById(doctor.getId(), patient.getId());
     }
 
     /**
@@ -329,11 +349,13 @@ public class MedicationTrackingSystem {
      */
     public boolean addMedication(String name, double dose, int quantity_in_stock, String expiry_date) {
         if (MedUtils.validateName(name) && MedUtils.validateDose(dose) && MedUtils.validateStockQty(quantity_in_stock) && MedUtils.validateYearMonthString(expiry_date)) {
-            this.medications.add(new Medication(this.getNumMedications() + 1, name, dose, quantity_in_stock, expiry_date));
+            int next_id = (medications.isEmpty()) ? 1 : medications.get(medications.size() - 1).getId() + 1;
+            this.medications.add(new Medication(next_id, name, dose, quantity_in_stock, expiry_date));
             return true;
         }
         return false;
     }
+    
 
     /**
      * Edits a medication record by ID.
@@ -378,7 +400,7 @@ public class MedicationTrackingSystem {
         if (medication == null) {
             return false;
         }
-        return this.removeMedicationById(medication.getId());
+        return this.medications.remove(medication);
     }
 
     /**
@@ -412,6 +434,32 @@ public class MedicationTrackingSystem {
         return expired_meds;
     }
 
+    // restock medication by id by adding amount
+    public boolean restockMedicationById(int medication_id, int amount) {
+        if (amount <= 0) return false; 
+        Medication medication = getMedicationById(medication_id);
+        if (medication == null) return false;
+        medication.setQuantityInStock(medication.getQuantityInStock() + amount);
+        return true;
+    }
+
+    // restock medication by reference by adding amount
+    public boolean restockMedication(Medication medication, int amount) {
+        if (medication == null || amount <= 0) return false;
+        // check this exact medication object exists in the system
+        if (!this.medications.contains(medication)) {
+            return false;
+        }
+        return restockMedicationById(medication.getId(), amount);
+    }   
+
+    public void restockAllMedications(int amount) {
+        if (amount <= 0) return; 
+        for (Medication medication : this.medications) {
+            medication.setQuantityInStock(medication.getQuantityInStock() + amount);
+        }
+    }
+
     /**
      * Generates a report of expired medications.
      *
@@ -430,6 +478,56 @@ public class MedicationTrackingSystem {
         expired_meds_report.add("<-- ============ End of Report ==============");
 
         return expired_meds_report;
+    }
+
+    // overloaded method with default expiry date in 1 year
+    public boolean addPrescription(Doctor doctor, Patient patient, Medication medication) {
+        return addPrescription(doctor, patient, medication, LocalDate.now().plusYears(1));
+    }
+    
+    // overloaded method with date as a String ("YYYY-MM-DD")
+    public boolean addPrescription(Doctor doctor, Patient patient, Medication medication, String expiry_date) {
+        if (!MedUtils.validateYearMonthString(expiry_date)) return false; 
+        LocalDate parsedDate = MedUtils.stringMedExpToLocalDate(expiry_date);
+        return addPrescription(doctor, patient, medication, parsedDate);
+    }
+    
+    // overloaded method with expiry date as a LocalDate
+    public boolean addPrescription(Doctor doctor, Patient patient, Medication medication, LocalDate expiry_date) {
+        if (doctor == null || patient == null || medication == null || expiry_date == null) return false;
+    
+        // check references exist in the system
+        if (!this.doctors.contains(doctor) || !this.patients.contains(patient) || !this.medications.contains(medication)) {
+            return false;
+        }
+    
+        // calculate next prescription ID
+        int next_id = (prescriptions.isEmpty()) ? 1 : prescriptions.get(prescriptions.size() - 1).getId() + 1;
+    
+        // create the prescription with the given expiry date
+        Prescription prescription = new Prescription(next_id, doctor, patient, medication, expiry_date);
+        this.prescriptions.add(prescription);
+    
+        return true;
+    }
+
+
+    // get prescriptions by doctor reference
+    public List<Prescription> getPrescriptionsByDoctor(Doctor doctor) {
+    if (doctor == null || !this.doctors.contains(doctor)) return new ArrayList<>();
+    // call overloaded method with doctor ID!
+    return getPrescriptionsByDoctor(doctor.getId()); 
+    }
+
+    // overloaded method to get prescriptions by doctor ID
+    public List<Prescription> getPrescriptionsByDoctor(int doctor_id) {
+    List<Prescription> result = new ArrayList<>();
+    for (Prescription prescription : this.prescriptions) {
+        if (prescription.getDoctor().getId() == doctor_id) {
+            result.add(prescription);
+        }
+    }
+    return result;
     }
 
     // toString() method, shows statistics
