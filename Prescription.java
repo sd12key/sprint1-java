@@ -9,13 +9,19 @@ public class Prescription {
     private final Medication medication; 
     private final LocalDate prescription_expiry;
 
-    // constructor with specific expiry date
+    // constructor
     public Prescription(int id, Doctor doctor, Patient patient, Medication medication, LocalDate prescription_expiry) {
         this.id = id;
         this.doctor = doctor;
         this.patient = patient;
         this.medication = medication;
         this.prescription_expiry = prescription_expiry;
+
+        // make sure the patient is managed by the doctor
+        if (!doctor.getPatients().contains(patient)) {
+            doctor.addPatient(patient);
+        }
+
         // add this prescription to the patient's list of prescriptions
         this.patient.addPrescription(this);
     }
