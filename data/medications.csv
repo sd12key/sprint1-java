@@ -11,15 +11,15 @@ medication_id,name,dosage,stock_qty,expiration_date
 10,Nerve Regenerator,500.0,26,2027-10
 11,Calcium Supplement,500.0,26,2026-07
 12,Bone Growth Stimulator,10.0,29,2027-10
-13,Muscle Relaxant,10.0,20,2024-11
+13,Muscle Relaxant,10.0,0,2024-11
 14,Children's Antibiotic,125.0,26,2026-02
 15,Fever Reducer,100.0,29,2026-11
 16,Cough Syrup,50.0,26,2026-06
-17,Multivitamin,10.0,29,2027-09
+17,Multivitamin,10.0,18,2027-09
 18,Insulin,50.0,25,2026-05
 19,Thyroid Hormone,100.0,29,2025-02
 20,Corticosteroid,40.0,23,2026-05
 21,Bronchodilator,2.0,8,2026-12
 22,Steroid Inhaler,250.0,21,2026-05
 23,Cough Suppressant,20.0,26,2027-05
-24,Antihistamine,10.0,29,2026-07
+24,Antihistamine,10.0,0,2026-07

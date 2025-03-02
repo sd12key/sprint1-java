@@ -130,6 +130,82 @@ public class MedicationTrackingSystemExampleMenu {
         }
     }
 
+    public static boolean confirmYesNo(Scanner scanner, String message) {
+        while (true) {
+            System.out.print(message + " (y/n): ");
+            String input = scanner.nextLine().trim().toLowerCase();
+    
+            if (input.equals("y")) {
+                return true;
+            } else if (input.equals("n")) {
+                return false;
+            } else {
+                System.out.println("Invalid input. Please enter 'y' for Yes or 'n' for No.");
+            }
+        }
+    }
+
+    public static int getPositiveInteger(Scanner scanner, String prompt) {
+        int number = -1;
+        while (number <= 0) {
+            System.out.print(prompt + " (positive integer): ");
+            String input = scanner.nextLine().trim();
+            if (MedUtils.isValidInteger(input)) {
+                number = Integer.parseInt(input);
+                if (number <= 0) {
+                    System.out.println("Input must be a positive number.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a positive integer.");
+            }
+        }
+        return number;
+    }
+
+    public static int getPositiveIntegerOrZero(Scanner scanner, String prompt) {
+        int number = -1;
+        while (number < 0) {  
+            System.out.print(prompt + " (positive integer, or 0 to cancel): ");
+            String input = scanner.nextLine().trim();
+            if (MedUtils.isValidInteger(input)) {
+                number = Integer.parseInt(input);
+                if (number < 0) {  
+                    System.out.println("Input must be a non-negative number. Enter 0 to cancel.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a non-negative integer. Enter 0 to cancel.");
+            }
+        }
+        return number;
+    }
+
+    public static int inputDoctorIdOrZero(MedicationTrackingSystem med_system, Scanner scanner) {
+        while (true) {
+            int doctor_id = getPositiveIntegerOrZero(scanner, "Enter Doctor ID (or 0 to cancel)");
+            if (doctor_id == 0) return 0; 
+            if (med_system.getDoctorById(doctor_id) != null) return doctor_id;
+            System.out.println("Invalid Doctor ID. Please try again.");
+        }
+    }
+    
+    public static int inputPatientIdOrZero(MedicationTrackingSystem med_system, Scanner scanner) {
+        while (true) {
+            int patient_id = getPositiveIntegerOrZero(scanner, "Enter Patient ID (or 0 to cancel)");
+            if (patient_id == 0) return 0; 
+            if (med_system.getPatientById(patient_id) != null) return patient_id;
+            System.out.println("Invalid Patient ID. Please try again.");
+        }
+    }
+    
+    public static int inputMedicationIdOrZero(MedicationTrackingSystem med_system, Scanner scanner) {
+        while (true) {
+            int medication_id = getPositiveIntegerOrZero(scanner, "Enter Medication ID (or 0 to cancel)");
+            if (medication_id == 0) return 0; 
+            if (med_system.getMedicationById(medication_id) != null) return medication_id;
+            System.out.println("Invalid Medication ID. Please try again.");
+        }
+    }
+
     private static void addPatient(MedicationTrackingSystem med_system, Scanner scanner) {
         System.out.println("TODO: Implement addPatient()");
     }
@@ -179,26 +255,149 @@ public class MedicationTrackingSystemExampleMenu {
     }
 
     private static void assignPatientToDoctor(MedicationTrackingSystem med_system, Scanner scanner) {
-        System.out.println("TODO: Implement assignPatientToDoctor()");
+        System.out.println("\n =======> Assign Patient to Doctor <======\n");
+    
+        int doctor_id;
+        int patient_id;
+        Doctor doctor;
+        Patient patient;
+    
+        // loop until a valid doctor is confirmed
+        while (true) {
+            doctor_id = inputDoctorIdOrZero(med_system, scanner);
+            if (doctor_id == 0) {
+                System.out.println("Operation canceled.");
+                return;
+            }
+            doctor = med_system.getDoctorById(doctor_id);
+            System.out.println("\nSelected Doctor: " + doctor);
+            System.out.println();
+            if (confirmYesNo(scanner, "Confirm this doctor?")) {
+                break; // Exit loop if confirmed
+            }
+        }
+    
+        // display assigned patients
+        List<Patient> assigned_patients = doctor.getPatients();
+        if (!assigned_patients.isEmpty()) {
+            System.out.println("\n** Patients currently assigned to this doctor:");
+            for (Patient patient_in_list : assigned_patients) {
+                System.out.println(patient_in_list);
+            }
+        } else {
+            System.out.println("\nThis doctor has no assigned patients.");
+        }
+        System.out.println();
+    
+        // enter Patient ID
+        while (true) {
+            patient_id = inputPatientIdOrZero(med_system, scanner);
+            if (patient_id == 0) {
+                System.out.println("Operation canceled.");
+                return;
+            }
+            patient = med_system.getPatientById(patient_id);
+            System.out.println("\nSelected Patient: " + patient);
+            System.out.println();
+            if (confirmYesNo(scanner, "Confirm this patient?")) {
+                break; // Exit loop if confirmed
+            }
+        }
+            
+        // check if patient is already assigned
+        if (doctor.getPatients().contains(patient)) {
+            System.out.println("\nThis patient is already assigned to this doctor.");
+            return;
+        }
+    
+        // assign patient
+        if (doctor.addPatient(patient)) {
+            System.out.println("\nPatient successfully assigned to the doctor.");
+        } else {
+            System.out.println("\nFailed to assign patient. Please check the system.");
+            return;
+        }
+    
+        // display updated doctor details
+        System.out.println("\nUpdated Doctor Information: " + doctor);
+        System.out.println("Updated List of Patients:");
+        for (Patient assigned_patient : doctor.getPatients()) {
+            System.out.println(assigned_patient);
+        }
+    
+        System.out.println("\n =======> Assignment Completed! <======\n");
     }
-
+    
+    
     private static void enterNewPrescription(MedicationTrackingSystem med_system, Scanner scanner) {
         System.out.println("TODO: Implement enterNewPrescription()");
     }
 
     private static void listPrescriptionsByDoctor(MedicationTrackingSystem med_system, Scanner scanner) {
-        System.out.println("TODO: Implement listPrescriptionsByDoctor()");
+        System.out.println("\n =======> List Prescriptions by Doctor <======\n");
+    
+        int doctor_id = getPositiveInteger(scanner, "Enter Doctor ID");
+    
+        List<String> report = med_system.checkPrescriptionsByDoctorReport(doctor_id);
+        printReport(report);
+        System.out.println();
     }
+    
 
     private static void generateFullSystemReport(MedicationTrackingSystem med_system) {
-        System.out.println("TODO: Implement generateFullSystemReport()");
+        List<String> report = med_system.fullSystemReport();
+        System.out.println();
+        printReport(report);
+        System.out.println();
     }
 
     private static void expiredMedicationsReport(MedicationTrackingSystem med_system) {
-        System.out.println("TODO: Implement expiredMedicationsReport()");
+        List<String> report = med_system.checkForExpiredMedsReport();
+        System.out.println();
+        printReport(report);
+        System.out.println();
     }
+  
 
     private static void restockMedications(MedicationTrackingSystem med_system, Scanner scanner) {
-        System.out.println("TODO: Implement restockMedications()");
+        System.out.println("\n =======> Restocking Medications <======\n");
+    
+        // ask for threshold
+        int threshold = getPositiveInteger(scanner, "Enter Stock Threshold");
+        
+        // retrieve and display low-stock medications
+        List<Medication> low_stock_meds = med_system.checkLowStockMeds(threshold);
+        if (low_stock_meds.isEmpty()) {
+            System.out.println("No medications found below the given threshold.");
+            return;
+        }
+    
+        System.out.println("\nLow Stock Medications (below " + threshold + " units):");
+        for (Medication med : low_stock_meds) {
+            System.out.println(med);
+        }
+    
+        // ask if the user wants to restock
+        if (!confirmYesNo(scanner, "\nDo you want to restock these medications?")) {
+            System.out.println("Restocking canceled.");
+            return;
+        }
+    
+        // ask for restock amount
+        int restock_amount = getPositiveInteger(scanner, "Enter Re-Stock Amount");
+        
+        // restock all chosen medications
+        for (Medication med : low_stock_meds) {
+            med_system.restockMedication(med, restock_amount);
+        }
+    
+        // display updated medications
+        System.out.println("\nUpdated Medication Stocks:");
+        for (Medication med : low_stock_meds) {
+            System.out.println(med);
+        }
+    
+        System.out.println("\n =======> Restocking Completed! <======\n");
     }
+        
 }

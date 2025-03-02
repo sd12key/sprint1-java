@@ -523,6 +523,17 @@ public class MedicationTrackingSystem {
         return expired_meds;
     }
 
+    // check Medication stock, scans all medication and generates a list of low stock medications
+    public List<Medication> checkLowStockMeds(int threshold) {
+        List<Medication> low_stock_meds = new ArrayList<>();
+        for (Medication medication : this.medications) {
+            if (medication.getQuantityInStock() < threshold) {
+                low_stock_meds.add(medication);
+            }
+        }
+        return low_stock_meds;
+    }
+
     // restock medication by id by adding amount
     public boolean restockMedicationById(int medication_id, int amount) {
         if (amount <= 0) return false; 
