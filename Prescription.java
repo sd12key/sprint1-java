@@ -1,15 +1,16 @@
 import java.time.LocalDate;
 
 public class Prescription {
-    // all fields are final once set, so prescription onject cannot be modified
-    // which make sense, since prescription is a legal document
     private final int id;
-    private final Doctor doctor;
-    private final Patient patient;
-    private final Medication medication; 
-    private final LocalDate prescription_expiry;
+    private Doctor doctor;
+    private Patient patient;
+    private Medication medication; 
+    private LocalDate prescription_expiry;
 
     // constructor
+    // actually, these better have to be clones of the objects passed in, so it's is a "snapshot"
+    // or deep copies, so that the objects inside prescription can't be changed from outside
+    // but for now, we'll just pass in the objects
     public Prescription(int id, Doctor doctor, Patient patient, Medication medication, LocalDate prescription_expiry) {
         this.id = id;
         this.doctor = doctor;
